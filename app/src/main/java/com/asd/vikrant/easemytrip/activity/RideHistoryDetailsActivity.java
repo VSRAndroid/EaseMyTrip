@@ -38,6 +38,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity implements OnM
     List<RideGpsData> gpsDataList;
     DatabaseHelper db;
     DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,15 +55,15 @@ public class RideHistoryDetailsActivity extends AppCompatActivity implements OnM
     private void init() {
 
         rideNameText = findViewById(R.id.rideNameText);
-        rideStartText =findViewById(R.id.rideStartText);
+        rideStartText = findViewById(R.id.rideStartText);
         rideEndText = findViewById(R.id.rideEndText);
         distanceText = findViewById(R.id.distanceText);
         rideNameText.setText(rideName);
         Date start_date = new Date(Long.parseLong(startTime));
         Date end_date = new Date(Long.parseLong(endTime));
-        rideStartText.setText("Ride Start: "+ simple.format(start_date));
-        rideEndText.setText("Ride End: "+ simple.format(end_date));
-        distanceText.setText("Distance: "+distance+"km.");
+        rideStartText.setText("Ride Start: " + simple.format(start_date));
+        rideEndText.setText("Ride End: " + simple.format(end_date));
+        distanceText.setText("Distance: " + distance + "km.");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
@@ -82,10 +83,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity implements OnM
                             cursor.getString(cursor.getColumnIndex(DatabaseHelper.LONGITUDE)));
                     gpsDataList.add(rideGpsData);
                     cursor.moveToNext();
-                }
-
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -98,36 +96,32 @@ public class RideHistoryDetailsActivity extends AppCompatActivity implements OnM
 
         LatLng startPoint = new LatLng(Double.valueOf(gpsDataList.get(0).getLat()),
                 Double.valueOf(gpsDataList.get(0).getLng()));
-        LatLng endPoint = new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLat()),
-                Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLng()));
+        LatLng endPoint = new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLat()),
+                Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLng()));
         CameraPosition googlePlex = CameraPosition.builder()
-                .target(new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLat()),
-                        Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLng())))
+                .target(new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLat()),
+                        Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLng())))
                 .bearing(45)
                 .zoom(18)
                 .tilt(0)
                 .build();
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 100, null);
-        if(mStartLocationMarker!=null)
-        {
+        if (mStartLocationMarker != null) {
             mStartLocationMarker.remove();
         }
         mStartLocationMarker = googleMap.addMarker(new MarkerOptions().position(startPoint).title("Start"));
         mStartLocationMarker.showInfoWindow();
-        if(mCurrLocationMarker!=null)
-        {
+        if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }
         mCurrLocationMarker = googleMap.addMarker(new MarkerOptions().position(endPoint).title("End"));
         mCurrLocationMarker.showInfoWindow();
-        for(int v =0; v< gpsDataList.size(); v++)
-        {
+        for (int v = 0; v < gpsDataList.size(); v++) {
             coordinateList.add(new LatLng(Double.valueOf(gpsDataList.get(v).getLat()), Double.valueOf(gpsDataList.get(v).getLng())));
         }
 
-        if(polyline!=null)
-        {
+        if (polyline != null) {
             polyline.remove();
         }
         PolylineOptions polyOptions = new PolylineOptions();

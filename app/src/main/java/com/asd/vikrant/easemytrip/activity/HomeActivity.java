@@ -51,9 +51,9 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     private PrefManager prefManager;
     private int ACCESS_FINE_LOCATION = 1;
     private DatabaseHelper db;
-    double lat ;
+    double lat;
     double longi;
-    int ride_count =0;
+    int ride_count = 0;
     List<RideGpsData> gpsDataList;
     Handler mHandler = new Handler();
     Boolean activeThread = true;
@@ -82,14 +82,13 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         timerText = findViewById(R.id.timerText);
         showTimer.StopTimer(timerText);
 
-        if(prefManager.getData("check").equalsIgnoreCase("true")){
-            prefManager.saveData("check",prefManager.getData("check"));
+        if (prefManager.getData("check").equalsIgnoreCase("true")) {
+            prefManager.saveData("check", prefManager.getData("check"));
             start_btn.setText(getString(R.string.end_ride));
-        }
-        else{
+        } else {
 
-            prefManager.saveData("check",prefManager.getData("check"));
-           // start_btn.setText(getString(R.string.end_ride));
+            prefManager.saveData("check", prefManager.getData("check"));
+            // start_btn.setText(getString(R.string.end_ride));
         }
 
         // start your ride......................
@@ -97,21 +96,16 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                if(prefManager.getData("check").equalsIgnoreCase(""))
-                {
-                    prefManager.saveData("check","true");
+                if (prefManager.getData("check").equalsIgnoreCase("")) {
+                    prefManager.saveData("check", "true");
                     start_btn.setText(getString(R.string.start));
                 }
-                if(prefManager.getData("check").equalsIgnoreCase("true")
-                        && start_btn.getText().toString().equalsIgnoreCase(getString(R.string.start)))
-                {
-                    if(prefManager.getData("ride_no").equalsIgnoreCase(""))
-                    {
+                if (prefManager.getData("check").equalsIgnoreCase("true")
+                        && start_btn.getText().toString().equalsIgnoreCase(getString(R.string.start))) {
+                    if (prefManager.getData("ride_no").equalsIgnoreCase("")) {
                         prefManager.saveData("ride_no", "0");
-                    }
-                    else
-                    {
-                        ride_count = Integer.parseInt(prefManager.getData("ride_no")) + 1 ;
+                    } else {
+                        ride_count = Integer.parseInt(prefManager.getData("ride_no")) + 1;
                         prefManager.saveData("ride_no", String.valueOf(ride_count));
                     }
 
@@ -120,31 +114,26 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                     serviceIntent.putExtra("ride", "Ride" + ride_count);
                     serviceIntent.putExtra("inputExtra", "If you are completed your ride then press end ride button.");
                     ContextCompat.startForegroundService(Objects.requireNonNull(getApplicationContext()), serviceIntent);
-                    prefManager.saveData("check","true");
+                    prefManager.saveData("check", "true");
                     showTimer.StartTimer(timerText);
                     activeThread = true;
                      /*If already exits previous ride polyline and marker............
                      so firstly remove it.......*/
-                    if(polyline!=null )
-                    {
+                    if (polyline != null) {
                         polyline.remove();
                     }
-                    if(mCurrLocationMarker!=null)
-                    {
+                    if (mCurrLocationMarker != null) {
                         mCurrLocationMarker.remove();
                     }
                     getCurrentRideData();
-                }
-
-                else{
+                } else {
                     Intent stopServiceIntent = new Intent(getApplicationContext(), MyBackgroundService.class);
                     Objects.requireNonNull(getApplicationContext()).stopService(stopServiceIntent);
-                    prefManager.saveData("check","true");
+                    prefManager.saveData("check", "true");
                     start_btn.setText(getString(R.string.start));
                     showTimer.StopTimer(timerText);
                     activeThread = false;
                 }
-
             }
         });
 
@@ -160,35 +149,29 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     // request app location permission .....................
-    private void requestPermission()
-    {
+    private void requestPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                &&ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
         }
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, ACCESS_FINE_LOCATION);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        if (requestCode == ACCESS_FINE_LOCATION)
-        {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == ACCESS_FINE_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                    grantResults[1] == PackageManager.PERMISSION_GRANTED)
-            {
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted successfully", Toast.LENGTH_SHORT).show();
                 SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
                 assert mapFragment != null;
                 mapFragment.getMapAsync(this);
 
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, "Permission is denied!", Toast.LENGTH_SHORT).show();
                 finish();
-                boolean showRationale = shouldShowRequestPermissionRationale( Manifest.permission.ACCESS_FINE_LOCATION );
-                boolean showRationale2 = shouldShowRequestPermissionRationale( Manifest.permission.ACCESS_COARSE_LOCATION );
+                boolean showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION);
+                boolean showRationale2 = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION);
                 if (!showRationale && !showRationale2) {
                     openSettingsDialog();
                 }
@@ -197,15 +180,13 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     // required permissions settings ...................
-    private void openSettingsDialog()
-    {
+    private void openSettingsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
         builder.setTitle("Required Permissions");
         builder.setMessage("This app require permission to use awesome feature. Grant them in app settings.");
         builder.setPositiveButton("Take Me To SETTINGS", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -214,11 +195,9 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-        {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -228,33 +207,33 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap map) {
-          //  Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //  Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         googleMap = map;
         GPSTracker gps = new GPSTracker(getApplicationContext());
         if (gps.canGetLocation()) {
-                lat = gps.getLatitude();
-                longi = gps.getLongitude();
+            lat = gps.getLatitude();
+            longi = gps.getLongitude();
 //                updateLocation();
-                LatLng vehiclePoint = new LatLng(lat, longi);
-                CameraPosition googlePlex = CameraPosition.builder().target(new LatLng(lat, longi))
-                        .bearing(45)
-                        .zoom(18)
-                        .tilt(0)
-                        .build();
+            LatLng vehiclePoint = new LatLng(lat, longi);
+            CameraPosition googlePlex = CameraPosition.builder().target(new LatLng(lat, longi))
+                    .bearing(45)
+                    .zoom(18)
+                    .tilt(0)
+                    .build();
 
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 100, null);
-                mStartLocationMarker = googleMap.addMarker(new MarkerOptions().position(vehiclePoint).title("Current"));
-                mStartLocationMarker.showInfoWindow();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 100, null);
+            mStartLocationMarker = googleMap.addMarker(new MarkerOptions().position(vehiclePoint).title("Current"));
+            mStartLocationMarker.showInfoWindow();
             //showLocation.setText("Your Location: " + "\n" + "Latitude: " + latitude + "\n" + "Longitude: " + longitude);
-            } else {
-                Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
-            }
+        } else {
+            Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
 
     // get current ride data.........................
-     private void getCurrentRideData() {
+    private void getCurrentRideData() {
 
         new Thread(new Runnable() {
             @Override
@@ -283,36 +262,33 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void getLocationByDb() {
-            gpsDataList = new ArrayList<>();
-            Cursor cursor = db.getUnSyncedData("Ride" + ride_count);
+        gpsDataList = new ArrayList<>();
+        Cursor cursor = db.getUnSyncedData("Ride" + ride_count);
 
-            if (cursor.moveToFirst()) {
-                while (!cursor.isAfterLast()) {
-                    try {
-                        RideGpsData rideGpsData = new RideGpsData(cursor.getString(cursor.getColumnIndex(DatabaseHelper.LATITUDE)),
-                                cursor.getString(cursor.getColumnIndex(DatabaseHelper.LONGITUDE)));
-                        gpsDataList.add(rideGpsData);
-                        genratePolyLine();
-                        cursor.moveToNext();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                try {
+                    RideGpsData rideGpsData = new RideGpsData(cursor.getString(cursor.getColumnIndex(DatabaseHelper.LATITUDE)),
+                            cursor.getString(cursor.getColumnIndex(DatabaseHelper.LONGITUDE)));
+                    gpsDataList.add(rideGpsData);
+                    genratePolyLine();
+                    cursor.moveToNext();
 
-                    }
-
-                    catch (Exception ex)
-                    {
-                        ex.printStackTrace();
-                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
+        }
     }
 
     private void genratePolyLine() {
         //  get ride start and point.........................
-        List<LatLng>coordinateList = new ArrayList<>();
-        LatLng startPoint = new LatLng(Double.valueOf(gpsDataList.get(0).getLat()),Double.valueOf(gpsDataList.get(0).getLng()));
-        LatLng endPoint = new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLat()), Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLng()));
+        List<LatLng> coordinateList = new ArrayList<>();
+        LatLng startPoint = new LatLng(Double.valueOf(gpsDataList.get(0).getLat()), Double.valueOf(gpsDataList.get(0).getLng()));
+        LatLng endPoint = new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLat()), Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLng()));
         CameraPosition googlePlex = CameraPosition.builder()
-                .target(new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLat()),
-                Double.valueOf(gpsDataList.get(gpsDataList.size()-1).getLng())))
+                .target(new LatLng(Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLat()),
+                        Double.valueOf(gpsDataList.get(gpsDataList.size() - 1).getLng())))
                 .bearing(45)
                 .zoom(18)
                 .tilt(0)
@@ -320,25 +296,21 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 100, null);
         // set start and current position in map..........................
-        if(mStartLocationMarker!=null)
-        {
+        if (mStartLocationMarker != null) {
             mStartLocationMarker.remove();
         }
         mStartLocationMarker = googleMap.addMarker(new MarkerOptions().position(startPoint).title("Start"));
         mStartLocationMarker.showInfoWindow();
-        if(mCurrLocationMarker!=null)
-        {
+        if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }
         mCurrLocationMarker = googleMap.addMarker(new MarkerOptions().position(endPoint).title("current"));
         mCurrLocationMarker.showInfoWindow();
-        for(int v =0; v< gpsDataList.size(); v++)
-        {
+        for (int v = 0; v < gpsDataList.size(); v++) {
             coordinateList.add(new LatLng(Double.valueOf(gpsDataList.get(v).getLat()), Double.valueOf(gpsDataList.get(v).getLng())));
         }
-         // create track start point to end point.............
-        if(polyline!=null)
-        {
+        // create track start point to end point.............
+        if (polyline != null) {
             polyline.remove();
         }
         PolylineOptions polyOptions = new PolylineOptions();

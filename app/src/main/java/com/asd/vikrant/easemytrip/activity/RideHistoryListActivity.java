@@ -26,13 +26,14 @@ public class RideHistoryListActivity extends AppCompatActivity {
     List<RideDataList> filter_rideDataListList;
     List<String> rideList;
     TextView noRideText;
-    String  rideName, startTime, endTime, distance;
+    String rideName, startTime, endTime, distance;
     RecyclerView ride_recyclerView;
     RideHistoryAdapter rideHistoryAdapter;
     int count = 0;
-    Double distanceRide=0.00;
+    Double distanceRide = 0.00;
     DecimalFormat decimalFormat = new DecimalFormat("##.00");
     Boolean checkCount = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,10 +62,7 @@ public class RideHistoryListActivity extends AppCompatActivity {
                 try {
                     rideList.add(cursor.getString(cursor.getColumnIndex(DatabaseHelper.RIDE_NO)));
                     cursor.moveToNext();
-                }
-
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -85,10 +83,7 @@ public class RideHistoryListActivity extends AppCompatActivity {
                     rideDataListList.add(rideGpsData);
                     cursor2.moveToNext();
 
-                }
-
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -96,11 +91,9 @@ public class RideHistoryListActivity extends AppCompatActivity {
 
         getRideListData();
 
-        if(rideList.size()==0)
-        {
+        if (rideList.size() == 0) {
             noRideText.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             noRideText.setVisibility(View.GONE);
         }
 
@@ -110,18 +103,14 @@ public class RideHistoryListActivity extends AppCompatActivity {
 
     private void getRideListData() {
         filter_rideDataListList = new ArrayList<>();
-        for(int i = 0; i < rideList.size(); i++)
-        {
+        for (int i = 0; i < rideList.size(); i++) {
             checkCount = true;
-            for(int v = 0 ; v < rideDataListList.size(); v ++)
-            {
-                if(rideList.get(i).toString().equalsIgnoreCase(rideDataListList.get(v).getRide_name())) {
-                    if(checkCount)
-                    {
-                        if(i == 0){
+            for (int v = 0; v < rideDataListList.size(); v++) {
+                if (rideList.get(i).toString().equalsIgnoreCase(rideDataListList.get(v).getRide_name())) {
+                    if (checkCount) {
+                        if (i == 0) {
                             count = 0;
-                        }
-                        else{
+                        } else {
                             count = v;
                         }
                     }
@@ -131,10 +120,9 @@ public class RideHistoryListActivity extends AppCompatActivity {
                     startTime = rideDataListList.get(count).getRide_start();
                     endTime = rideDataListList.get(v).getRide_end();
 
-                    if(v!=0)
-                    {
-                        distanceMethod(Double.valueOf(rideDataListList.get(v-1).getLat()),
-                                Double.valueOf(rideDataListList.get(v-1).getLng()),
+                    if (v != 0) {
+                        distanceMethod(Double.valueOf(rideDataListList.get(v - 1).getLat()),
+                                Double.valueOf(rideDataListList.get(v - 1).getLng()),
                                 Double.valueOf(rideDataListList.get(v).getLat()),
                                 Double.valueOf(rideDataListList.get(v).getLng()));
                     }
@@ -143,7 +131,7 @@ public class RideHistoryListActivity extends AppCompatActivity {
 
             RideDataList rideGpsData2 = new RideDataList(rideName, startTime, endTime, distance);
             filter_rideDataListList.add(rideGpsData2);
-            Log.v("DataList","value"+filter_rideDataListList.size());
+            Log.v("DataList", "value" + filter_rideDataListList.size());
         }
 
         rideHistoryAdapter = new RideHistoryAdapter(getApplicationContext(), filter_rideDataListList);
@@ -153,10 +141,10 @@ public class RideHistoryListActivity extends AppCompatActivity {
     // calculate distance.......................
 
     private void distanceMethod(double latStart, double lonStart, double latEnd, double lonEnd) {
-        Location startPoint=new Location("Starting");
+        Location startPoint = new Location("Starting");
         startPoint.setLatitude(latStart);
         startPoint.setLongitude(lonStart);
-        Location endPoint=new Location("Ending");
+        Location endPoint = new Location("Ending");
         endPoint.setLatitude(latEnd);
         endPoint.setLongitude(lonEnd);
         double distanceFirst = startPoint.distanceTo(endPoint);
