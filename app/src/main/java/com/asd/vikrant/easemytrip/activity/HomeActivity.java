@@ -43,7 +43,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+//
 public class HomeActivity extends AppCompatActivity implements OnMapReadyCallback {
     private Button start_btn, history_btn;
     private TextView timerText;
